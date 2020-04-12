@@ -4,3 +4,4 @@ mail_sender.py
 log/
 foreign-data/
 status-data/
+__pycache__/
