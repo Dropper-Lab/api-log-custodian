@@ -1,3 +1,4 @@
 .DS_Store
 mail_property.py
 mail_sender.py
+log/
