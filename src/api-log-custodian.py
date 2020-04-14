@@ -1,4 +1,6 @@
 """
+version : v1.0.0
+
 MIT License
 
 Copyright (c) 2020 Dropper Lab
@@ -28,42 +30,40 @@ import time
 import mail_sender
 
 
-def check_folder(folders):
-    errors = [0]
-
-    for folder in folders:
-        try:
-            if not os.path.exists(folder):
-                os.makedirs(folder)
-        except Exception as ex:
-            errors[0] = 1
-            errors.append([ex, folder])
-
-    return errors
-
-
-if __name__ == '__main__':
-    timestamp = int(time.time())
-
-    folder_list = ['log', 'foreign-data', 'status-data']
-
-    error_list = check_folder(folder_list)
+def check_folder(current_timestamp, folders):
+    results = [0]
 
     report_message = '* Dropper API Log Custodian Report *\n\n\n'
 
-    if error_list[0] == 0:
+    for folder in folders:
+        try:
+            if os.path.exists(folder):
+                results.append([0])
+            else:
+                results.append([1])
+                os.makedirs(folder)
+        except Exception as ex:
+            results.append([2, ex])
+
+    for result, i in zip(results[1:], range(len(folders))):
+        report_message += f"[{folders[i]}] {'GREEN' if result[0]==0 else 'YELLOW' if result[0]==1 else 'RED'}\n"
+        
+        if len(result) == 2:
+            report_message += '---------------------------\n'
+            report_message += f"{folders[i]}\n\nfolder:\n{result[1]}\n"
+            report_message += '---------------------------\n'
+        report_message += '\n'
+
+    if results[0] == 0:
+        report_message += '\n\n\n\n\n'
         report_message += 'Operating finished successfully\n'
     else:
-        for error in error_list[1:]:
-            report_message += '---------------------------\n'
-            report_message += f"{error[0]}\n\nfolder:\n{error[1]}\n"
-        report_message += '---------------------------\n'
         report_message += '\n\n\n\n\n'
         report_message += 'Some error occurred while crawling\n'
 
-    report_message += '\nThis report is based on (Unix Time)' + str(int(timestamp))
+    report_message += '\nThis report is based on (Unix Time)' + str(int(current_timestamp))
 
-    if error_list[0] == 0:
+    if results[0] == 0:
         mail_sender.send_mail(
             subject=f'[Dropper API](api-log-custodian) INFO: task report',
             message=report_message)
@@ -71,3 +71,12 @@ if __name__ == '__main__':
         mail_sender.send_mail(
             subject=f'[Dropper API](api-log-custodian) ERROR: task report',
             message=report_message)
+
+
+
+if __name__ == '__main__':
+    timestamp = int(time.time())
+
+    folder_list = ['log', 'foreign-data', 'status-data']
+
+    check_folder(timestamp, folder_list)
