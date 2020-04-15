@@ -38,12 +38,12 @@ def check_folder(current_timestamp, folders):
     for folder in folders:
         try:
             if os.path.exists(folder):
-                results.append([0, {'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))}])
+                results.append([0, {'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))/(1024*1024*1024)}])
             else:
                 if results[0] < 1:
                     results[0] = 1
                 os.makedirs(folder)
-                results.append([1, {'message': 'Folder Created', 'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))}])
+                results.append([1, {'message': 'Folder Created', 'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))/(1024*1024*1024)}])
         except Exception as ex:
             if results[0] < 2:
                 results[0] = 2
@@ -54,11 +54,11 @@ def check_folder(current_timestamp, folders):
         
         if result[0] == 0:
             report_message += '---------------------------\n'
-            report_message += f"size:\n{result[1]['size']}byte\n"
+            report_message += f"size:\n{result[1]['size']}GB\n"
             report_message += '---------------------------\n'
         elif result[0] == 1:
             report_message += '---------------------------\n'
-            report_message += f"{result[1]['message']}\n\nsize:\n{result[1]['size']}byte\n"
+            report_message += f"{result[1]['message']}\n\nsize:\n{result[1]['size']}GB\n"
             report_message += '---------------------------\n'
         elif result[0] == 2:
             report_message += '---------------------------\n'
@@ -67,7 +67,7 @@ def check_folder(current_timestamp, folders):
         report_message += '\n'
 
     report_message += '\n\n'
-    report_message += f"total size: {sum(data[1]['size'] for data in results[1:])}byte"
+    report_message += f"total size: {sum(data[1]['size'] for data in results[1:])}GB"
 
     if results[0] == 0:
         report_message += '\n\n\n\n\n'
