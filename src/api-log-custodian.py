@@ -1,5 +1,5 @@
 """
-version : v1.0.1
+version : v1.0.2
 
 MIT License
 
@@ -38,25 +38,42 @@ def check_folder(current_timestamp, folders):
     for folder in folders:
         try:
             if os.path.exists(folder):
-                results.append([0])
+                os.system('chmod 777 ' + folder)
+                results.append([0, sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))])
             else:
-                results.append([1])
-                os.makedirs(folder)
+                if results[0] < 1:
+                    results[0] = 1
+                os.system('mkdir ' + folder)
+                os.system('chmod 777 ' + folder)
+                results.append([1, 'Folder Created', sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))])
         except Exception as ex:
+            if results[0] < 2:
+                results[0] = 2
             results.append([2, ex])
 
     for result, i in zip(results[1:], range(len(folders))):
         report_message += f"[{folders[i]}] {'GREEN' if result[0]==0 else 'YELLOW' if result[0]==1 else 'RED'}\n"
         
-        if len(result) == 2:
+        if result[0] == 0:
             report_message += '---------------------------\n'
-            report_message += f"{folders[i]}\n\nfolder:\n{result[1]}\n"
+            report_message += f"size:\n{result[1]}byte\n"
+            report_message += '---------------------------\n'
+        elif result[0] == 1:
+            report_message += '---------------------------\n'
+            report_message += f"{result[1]}\n\nsize:\n{result[2]}byte\n"
+            report_message += '---------------------------\n'
+        elif result[0] == 2:
+            report_message += '---------------------------\n'
+            report_message += f"{result[1]}\n"
             report_message += '---------------------------\n'
         report_message += '\n'
 
     if results[0] == 0:
         report_message += '\n\n\n\n\n'
         report_message += 'Operating finished successfully\n'
+    elif results[0] == 1:
+        report_message += '\n\n\n\n\n'
+        report_message += 'Error has been fixed automatically\n'
     else:
         report_message += '\n\n\n\n\n'
         report_message += 'Some error occurred while crawling\n'
@@ -66,6 +83,10 @@ def check_folder(current_timestamp, folders):
     if results[0] == 0:
         mail_sender.send_mail(
             subject=f'[Dropper API](api-log-custodian) INFO: task report',
+            message=report_message)
+    elif results[0] == 1:
+        mail_sender.send_mail(
+            subject=f'[Dropper API](api-log-custodian) WARN: task report',
             message=report_message)
     else:
         mail_sender.send_mail(
