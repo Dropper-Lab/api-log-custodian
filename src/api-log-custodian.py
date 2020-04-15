@@ -49,7 +49,7 @@ def check_folder(current_timestamp, folders):
         except Exception as ex:
             if results[0] < 2:
                 results[0] = 2
-            results.append([2, {'message': ex}])
+            results.append([2, {'message': ex, 'size': 0}])
 
     for result, i in zip(results[1:], range(len(folders))):
         report_message += f"[{folders[i]}] {'GREEN' if result[0]==0 else 'YELLOW' if result[0]==1 else 'RED'}\n"
