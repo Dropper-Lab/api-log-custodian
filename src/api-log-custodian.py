@@ -68,6 +68,9 @@ def check_folder(current_timestamp, folders):
             report_message += '---------------------------\n'
         report_message += '\n'
 
+    report_message += '\n\n'
+    report_message += f"total size: {sum(data[1]['size'] for data in results[1:])}byte"
+
     if results[0] == 0:
         report_message += '\n\n\n\n\n'
         report_message += 'Operating finished successfully\n'
