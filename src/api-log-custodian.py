@@ -42,7 +42,7 @@ def check_folder(current_timestamp, folders):
             else:
                 if results[0] < 1:
                     results[0] = 1
-                os.system('mkdir ' + folder)
+                os.makedirs(folder)
                 results.append([1, {'message': 'Folder Created', 'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))}])
         except Exception as ex:
             if results[0] < 2:
