@@ -38,13 +38,11 @@ def check_folder(current_timestamp, folders):
     for folder in folders:
         try:
             if os.path.exists(folder):
-                os.system('chmod 777 ' + folder)
                 results.append([0, {'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))}])
             else:
                 if results[0] < 1:
                     results[0] = 1
                 os.system('mkdir ' + folder)
-                os.system('chmod 777 ' + folder)
                 results.append([1, {'message': 'Folder Created', 'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))}])
         except Exception as ex:
             if results[0] < 2:
