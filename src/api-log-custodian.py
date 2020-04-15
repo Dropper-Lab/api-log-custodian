@@ -1,5 +1,5 @@
 """
-version : v1.0.4
+version : v1.0.5
 
 MIT License
 
@@ -66,8 +66,22 @@ def check_folder(current_timestamp, folders):
             report_message += '---------------------------\n'
         report_message += '\n'
 
+    total_size = sum(data[1]['size'] for data in results[1:])
+
     report_message += '\n\n'
-    report_message += f"total size: {sum(data[1]['size'] for data in results[1:])}GB"
+    report_message += f"total size: {total_size}GB"
+    if total_size > 6:
+        if results[0] < 1:
+            results[0] = 1
+        report_message += '---------------------------\n'
+        report_message += 'Log is too big. Please backup and empty it immediately.'
+        report_message += '---------------------------\n'
+    elif total_size > 3:
+        if results[0] < 1:
+            results[0] = 1
+        report_message += '---------------------------\n'
+        report_message += 'Log is too big. Please backup and empty it.'
+        report_message += '---------------------------\n'
 
     if results[0] == 0:
         report_message += '\n\n\n\n\n'

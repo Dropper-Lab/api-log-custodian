@@ -18,3 +18,6 @@ The custodian for log data of dropper API crawler
 
 ### v1.0.4
 - Change unit of size for report to GB.
+
+### v1.0.5
+- Add log size warn feature.
