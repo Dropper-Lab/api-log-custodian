@@ -38,20 +38,23 @@ def check_folder(current_timestamp, folders):
     for folder in folders:
         try:
             if os.path.exists(folder):
-                results.append([0, {'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))/(1024*1024*1024)}])
+                results.append([0, {'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if
+                                                os.path.isfile(folder + '/' + file)) / (1024 * 1024 * 1024)}])
             else:
                 if results[0] < 1:
                     results[0] = 1
                 os.makedirs(folder)
-                results.append([1, {'message': 'Folder Created', 'size': sum(os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if os.path.isfile(folder + '/' + file))/(1024*1024*1024)}])
+                results.append([1, {'message': 'Folder Created', 'size': sum(
+                    os.path.getsize(folder + '/' + file) for file in os.listdir(folder) if
+                    os.path.isfile(folder + '/' + file)) / (1024 * 1024 * 1024)}])
         except Exception as ex:
             if results[0] < 2:
                 results[0] = 2
             results.append([2, {'message': ex, 'size': 0}])
 
     for result, i in zip(results[1:], range(len(folders))):
-        report_message += f"[{folders[i]}] {'GREEN' if result[0]==0 else 'YELLOW' if result[0]==1 else 'RED'}\n"
-        
+        report_message += f"[{folders[i]}] {'GREEN' if result[0] == 0 else 'YELLOW' if result[0] == 1 else 'RED'}\n"
+
         if result[0] == 0:
             report_message += '---------------------------\n'
             report_message += f"size:\n{result[1]['size']}GB\n"
@@ -107,7 +110,6 @@ def check_folder(current_timestamp, folders):
         mail_sender.send_mail(
             subject=f'[Dropper API](api-log-custodian) ERROR: task report',
             message=report_message)
-
 
 
 if __name__ == '__main__':
